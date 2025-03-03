@@ -1,7 +1,7 @@
 #ifndef BOOK_EVENT_HANDLER_HEADER
 #define BOOK_EVENT_HANDLER_HEADER
 
-#define AME_TOK_BOOK 0x41424B53
+#define AME_TOK_BOOK 0x41424B54
 
 #include "RE/Skyrim.h"
 #include "SKSE/SKSE.h"

@@ -1,5 +1,7 @@
 #include "SKSE/SKSE.h"
 #include "source/Events/BookEventHandler.hpp"
+#include "source/Commands/impl/GetBook.hpp"
+
 #include <spdlog/sinks/basic_file_sink.h>
 #include <Windows.h>
 #include <spdlog/sinks/msvc_sink.h>
@@ -10,12 +12,15 @@ void SetupLog()
 {
     auto logsFolder = SKSE::log::log_directory();
     if (!logsFolder) SKSE::stl::report_and_fail("SKSE log_directory not provided, logs disabled.");
+
     auto pluginName = SKSE::PluginDeclaration::GetSingleton()->GetName();
     auto logFilePath = *logsFolder / std::format("{}.log", pluginName);
     auto fileLoggerPtr = std::make_shared<spdlog::sinks::basic_file_sink_mt>(logFilePath.string(), true);
+
     std::shared_ptr<spdlog::logger> loggerPtr;
 
-    if (IsDebuggerPresent()) {
+    if (IsDebuggerPresent()) 
+    {
         auto debugLoggerPtr = std::make_shared<spdlog::sinks::msvc_sink_mt>();
         spdlog::sinks_init_list loggers{std::move(fileLoggerPtr), std::move(debugLoggerPtr)};
         loggerPtr = std::make_shared<spdlog::logger>("log", loggers);
@@ -28,19 +33,20 @@ void SetupLog()
     spdlog::flush_on(spdlog::level::trace);
 }
 
+bool RegisterCommands(RE::BSScript::IVirtualMachine* vm)
+{
+    vm->RegisterFunction("GetBook", "TokGetBook", GetBook_CMD);
+    return true;
+}
+
 SKSEPluginLoad(const SKSE::LoadInterface *skse)
 {
     SKSE::Init(skse);
     SetupLog();
 
-    SKSE::log::info("Loading plugin");
-    SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message *message) {
-        if (message->type == SKSE::MessagingInterface::kDataLoaded)
-            RE::ConsoleLog::GetSingleton()->Print("[TOK] loaded");
-            SKSE::log::info("[TOK] loaded");
-    });
-
     BookEventHandler::Register();
-
+    
+    SKSE::GetPapyrusInterface()->Register(RegisterCommands); 
+    SKSE::log::info("Plugin loaded successfully");
     return true;
 }

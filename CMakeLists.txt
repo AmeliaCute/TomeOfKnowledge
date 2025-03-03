@@ -29,6 +29,7 @@ endif()
 # Otherwise, you can set OUTPUT_FOLDER to any place you'd like :)
 # set(OUTPUT_FOLDER "D:/Repos/TomeOfKnowledge/out")
 file(GLOB_RECURSE source_files source/*.cpp)
+file(GLOB_RECURSE header_files source/*.hpp)
 
 
 # Setup your SKSE plugin as an SKSE plugin!

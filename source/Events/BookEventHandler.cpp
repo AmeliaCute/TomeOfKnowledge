@@ -28,7 +28,6 @@ RE::BSEventNotifyControl BookEventHandler::ProcessEvent(
 
     auto* player = RE::PlayerCharacter::GetSingleton();
     if(!player)
-
         return RE::BSEventNotifyControl::kContinue;
 
     if(event->newContainer != player->GetFormID())
@@ -85,6 +84,7 @@ void BookEventHandler::LoadCallback(SKSE::SerializationInterface* serialization)
                     return;
                 }
                 acquiredBooks.push_back(formID);
+                SKSE::log::info("Book loaded book {}", formID);
             }
             SKSE::log::info("Book loaded successfully with size of {}", count);
         }
